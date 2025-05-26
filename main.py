@@ -1,5 +1,8 @@
 # main.py
 from fastapi import FastAPI, Request, HTTPException
+from pydantic import BaseModel
+from typing import List
+from models import LeadCreate, LeadResponse
 from fastapi.responses import RedirectResponse, JSONResponse
 from zoho_service import initiate_zoho_auth, handle_zoho_callback, get_zoho_leads, create_zoho_lead
 from salesforce_service import initiate_salesforce_auth, handle_salesforce_callback, get_salesforce_leads, create_salesforce_lead
@@ -17,13 +20,13 @@ def zoho_auth():
 def zoho_callback(code: str):
     return handle_zoho_callback(code)
 
-@app.get("/zoho/get-leads")
+@app.get("/zoho/get-leads", response_model=dict)  
 def get_leads():
     return get_zoho_leads()
 
-@app.post("/zoho/create-lead")
-def post_lead(payload: dict):
-    return create_zoho_lead(payload)
+@app.post("/zoho/create-lead", response_model=dict) 
+def post_lead(payload: LeadCreate):
+    return create_zoho_lead(payload.dict())
 
 # SALESFORCE ROUTES
 @app.get("/salesforce/auth/initiate")
@@ -34,10 +37,10 @@ def salesforce_auth():
 def salesforce_callback(code: str):
     return handle_salesforce_callback(code)
 
-@app.get("/salesforce/get-leads")
+@app.get("/salesforce/get-leads", response_model=dict)
 def sf_get_leads():
     return get_salesforce_leads()
 
-@app.post("/salesforce/create-lead")
-def sf_create_lead(payload: dict):
-    return create_salesforce_lead(payload)
+@app.post("/salesforce/create-lead", response_model=dict)
+def sf_create_lead(payload: LeadCreate):
+    return create_salesforce_lead(payload.dict())
