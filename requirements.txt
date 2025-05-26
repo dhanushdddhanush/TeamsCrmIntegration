@@ -2,7 +2,4 @@ fastapi
 uvicorn
 requests
 python-dotenv
-pytest
-httpx
-gunicorn
 
